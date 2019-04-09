@@ -39,6 +39,8 @@ public class HorseBarn
         int horseIndex = 0;
         for(int i =0; i<spaces.length;i++)
         {
+            //The best way to compare two strings is str.equals(anotherString);
+            //The best way to call the name is spaces[index].getName();
             if(name.equals(spaces[i].getName()))
             {
                 horseIndex = i;
