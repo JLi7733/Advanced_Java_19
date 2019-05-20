@@ -39,7 +39,6 @@ public class FinalProject18 extends JFrame {
         do {
             Gallows(g);
             Figure[] shape = difficulty();
-            System.out.println(shape[7]);
             ArrayList<String> InputLetter = new ArrayList<String>();
 //        //Reads a random word from the file
             Scanner f = new Scanner(new File("C:\\Users\\jonat\\OneDrive\\Desktop\\School\\Hangman.txt"));
@@ -117,6 +116,8 @@ public class FinalProject18 extends JFrame {
                     }
                 }
             }while (keepGuessing);
+            mistakes = 0;
+            x = 150;
         } while (keepPlaying);
     }
     //End of Game Routine
@@ -186,9 +187,7 @@ public class FinalProject18 extends JFrame {
                     new Line(400, 350, Color.BLACK, 350, 400),
                     new Line(400, 350, Color.BLACK, 450, 400),
                     new Circle(365,175,Color.BLACK, 10),
-                    new Circle(410,175,Color.BLACK, 10),
-                    new Line (450,400, Color.BLACK, 475,400),
-                    new Line(350,400,Color.BLACK, 325,400)
+                    new Circle(410,175,Color.BLACK, 10)
             };
         }
         return pieces;
