@@ -3,8 +3,6 @@
   Hangman
   Guess the word in a limited amount of attempts
  */
-
-
 import java.awt.*;
 import javax.swing.*;
 import java.io.File;
@@ -36,12 +34,14 @@ public class FinalProject18 extends JFrame {
 
     public static void Gameplay(Graphics g) throws FileNotFoundException {
         boolean keepPlaying = true;
+        int x =100;
         do {
             Gallows(g);
             ArrayList<String> InputLetter = new ArrayList<String>();
+            Figure[] shape = difficulty();
 //        //Reads a random word from the file
-            Scanner f = new Scanner(new File("C:\\Users\\jonat\\IdeaProjects\\School\\src\\Hangman.txt.txt"));
-            Scanner numofLines = new Scanner(new File("C:\\Users\\jonat\\IdeaProjects\\School\\src\\Hangman.txt.txt"));
+            Scanner f = new Scanner(new File("C:\\Users\\jonat\\OneDrive\\Desktop\\School\\Hangman.txt"));
+            Scanner numofLines = new Scanner(new File("C:\\Users\\jonat\\OneDrive\\Desktop\\School\\Hangman.txt"));
             Random rand = new Random();
             int lines = 0;
             while(numofLines.hasNextLine()) //Reads how many lines in the file
@@ -60,85 +60,60 @@ public class FinalProject18 extends JFrame {
                 g.drawLine(100 + i * 50, 550, 110 + i * 50, 550);
             }
             boolean keepGuessing = true;//The guessing portion of the game
-            int mistakes = 0; //Initialized # of mistakes
-            do {
-                //Checks the user input:letter only, one letter, and if they have already entered this letter
-                boolean check = true;
-                String guess = JOptionPane.showInputDialog(null, "Enter a letter");
+            if(guessOption()){
+                String guess = JOptionPane.showInputDialog(null,"Enter the word you think it is");
+                keepGuessing = false;
+                if(guess.equalsIgnoreCase(word)){
+                    GameWon("Congrats you won");
+                }
+                else
+                    GameWon("Sorry you lost, the word was " + word);
+            }
+            else {
+                int mistakes = 0; //Initialized # of mistakes
                 do {
-                    guess = guess.toLowerCase();
-                    if (guess.length() == 1 && Arrays.asList(Alphabet).contains(guess) && !InputLetter.contains(guess)) {
-                        check = false;
-                        InputLetter.add(guess);
-                    } else if (InputLetter.contains(guess)) {
-                        guess = JOptionPane.showInputDialog(null, "Sorry, you've already entered " + guess);
+                    //Checks the user input:letter only, one letter, and if they have already entered this letter
+                    boolean check = true;
+                    String guess = JOptionPane.showInputDialog(null, "Enter a letter");
+                    do {
+                        guess = guess.toLowerCase();
+                        if (guess.length() == 1 && Arrays.asList(Alphabet).contains(guess) && !InputLetter.contains(guess)) {
+                            check = false;
+                            InputLetter.add(guess);
+                        } else if (InputLetter.contains(guess)) {
+                            guess = JOptionPane.showInputDialog(null, "Sorry, you've already entered " + guess);
+                        } else {
+                            guess = JOptionPane.showInputDialog(null, "Please only enter one letter from the alphabet");
+                        }
+                    } while (check);
+                    //Check if the player's input letter is in the word.
+                    int isLetterValid = word.indexOf(guess);
+                    if (isLetterValid == -1) {
+                        mistakes = mistakes + 1;
+                        g.drawString("Guessed Letters:", 50, 100);
+                        g.drawString(guess, x, 100);
+                        x = x + 10;
+                        shape[mistakes -1].draw(g);
                     } else {
-                        guess = JOptionPane.showInputDialog(null, "Please only enter one letter from the alphabet");
+                        int occurenceOfValidLetter = 0;
+                        while (isLetterValid >= 0)//checks how many times it is in the word and draws it in the corresponding blanks
+                        {
+                            occurenceOfValidLetter++;
+                            g.drawString(guess, 100 + 50 * isLetterValid, 525);
+                            isLetterValid = word.indexOf(guess, isLetterValid + 1);
+                        }
+                        wordLength = wordLength - occurenceOfValidLetter;
                     }
-                } while (check);
-                //Check if the player's input letter is in the word.
-                int isLetterValid = word.indexOf(guess);
-                if (isLetterValid == -1) {
-                    mistakes = mistakes + 1;
-                } else {
-                    int occurenceOfValidLetter = 0;
-                    while(isLetterValid>=0)//checks how many times it is in the word and draws it in the corresponding blanks
-                    {
-                        occurenceOfValidLetter++;
-                        g.drawString(guess, 100 + 50 * isLetterValid, 525);
-                        isLetterValid = word.indexOf(guess, isLetterValid+1);
-                    }
-                    wordLength = wordLength - occurenceOfValidLetter;
-                }
-                //Draws the next body part if you didn't guess correctly
-                switch (mistakes) {
-                    case 0:
-                        if (wordLength == 0) {
-                            keepGuessing = false;
-                            keepPlaying = GameWon("Good Job, you won!");
-                        }
-                        break;
-                    case 1:
-                        g.drawOval(350, 150, 100, 100);
-                        if (wordLength == 0) {
-                            keepGuessing = false;
-                            keepPlaying = GameWon("Good Job, you won!");
-                        }
-                        break;
-                    case 2:
-                        g.drawLine(400, 250, 400, 350);
-                        if (wordLength == 0) {
-                            keepGuessing = false;
-                            keepPlaying = GameWon("Good Job, you won!");
-                        }
-                        break;
-                    case 3:
-                        g.drawLine(400, 300, 350, 350);
-                        if (wordLength == 0) {
-                            keepGuessing = false;
-                            keepPlaying = GameWon("Good Job, you won!");
-                        }
-                        break;
-                    case 4:
-                        g.drawLine(400, 300, 450, 350);
-                        if (wordLength == 0) {
-                            keepGuessing = false;
-                            keepPlaying = GameWon("Good Job, you won!");
-                        }
-                        break;
-                    case 5:
-                        g.drawLine(400, 350, 350, 400);
-                        if (wordLength == 0) {
-                            keepGuessing = false;
-                            keepPlaying = GameWon("Good Job, you won!");
-                        }
-                        break;
-                    case 6:
-                        g.drawLine(400,350,450,400);
+                    if(wordLength == 0){
                         keepGuessing = false;
-                        keepPlaying = GameWon("Sorry you lost");
-                }
-            } while (keepGuessing);
+                        keepPlaying = GameWon("Good Job, you won!");
+                    }
+                    else if(mistakes == shape.length){
+                        keepPlaying = GameWon("Sorry you lost, the word was " + word);
+                    }
+
+                } while (keepGuessing);
+            }
         } while (keepPlaying);
     }
     //End of Game Routine
@@ -159,6 +134,61 @@ public class FinalProject18 extends JFrame {
         {
             return true;
         }
+    }
+    //Choosing what to guess
+    public static boolean guessOption() {
+        Object[] options = {"Letter", "Word"};
+        int p = JOptionPane.showOptionDialog(null,
+                " What do you want to guess \n" +
+                        "Note: If you guess the word you only get one shot.",
+                "Guessing",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[1]);
+        if (p == 1) {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+    //Choosing the difficulty
+    public static Figure[] difficulty(){
+        Object[] options = {"Normal", "Easy"};
+        int p = JOptionPane.showOptionDialog(null,
+                " Choose your difficulty \n" +
+                        "The harder it is the less guesses you get",
+                "Difficulty",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[1]);
+        Figure[] pieces = new Figure[]{};
+        switch (p){
+            case 0: pieces = new Figure[]{new Circle(350, 150, Color.BLACK,50),
+                    new Line(400, 250, Color.BLACK, 400, 350),
+                    new Line(400, 300, Color.BLACK,350, 350),
+                    new Line(400, 300, Color.BLACK,450, 350),
+                    new Line(400, 350, Color.BLACK, 350, 400),
+                    new Line(400, 350, Color.BLACK, 450, 400)
+                    };
+            case 1: pieces = new Figure[]{new Circle(350, 150, Color.BLACK,50),
+                    new Line(400, 250, Color.BLACK, 400, 350),
+                    new Line(400, 300, Color.BLACK,350,     350),
+                    new Line(400, 300, Color.BLACK,450, 350),
+                    new Line(400, 350, Color.BLACK, 350, 400),
+                    new Line(400, 350, Color.BLACK, 450, 400),
+                    new Circle(375,200,Color.BLACK, 10),
+                    new Circle(425,200,Color.BLACK, 10),
+                    new Line (450,400, Color.BLACK, 525,400),
+                    new Line(350,400,Color.BLACK, 325,400)
+            };
+        }
+        return pieces;
     }
 
     public static void main(String [] args) throws IOException
