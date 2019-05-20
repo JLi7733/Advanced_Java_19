@@ -34,11 +34,13 @@ public class FinalProject18 extends JFrame {
 
     public static void Gameplay(Graphics g) throws FileNotFoundException {
         boolean keepPlaying = true;
-        int x =100;
+        int x =150;
+        int mistakes = 0; //Initialized # of mistakes
         do {
             Gallows(g);
-            ArrayList<String> InputLetter = new ArrayList<String>();
             Figure[] shape = difficulty();
+            System.out.println(shape[7]);
+            ArrayList<String> InputLetter = new ArrayList<String>();
 //        //Reads a random word from the file
             Scanner f = new Scanner(new File("C:\\Users\\jonat\\OneDrive\\Desktop\\School\\Hangman.txt"));
             Scanner numofLines = new Scanner(new File("C:\\Users\\jonat\\OneDrive\\Desktop\\School\\Hangman.txt"));
@@ -60,18 +62,18 @@ public class FinalProject18 extends JFrame {
                 g.drawLine(100 + i * 50, 550, 110 + i * 50, 550);
             }
             boolean keepGuessing = true;//The guessing portion of the game
+            do{
             if(guessOption()){
                 String guess = JOptionPane.showInputDialog(null,"Enter the word you think it is");
                 keepGuessing = false;
                 if(guess.equalsIgnoreCase(word)){
-                    GameWon("Congrats you won");
+                    keepPlaying = GameWon("Congrats you won");
                 }
                 else
-                    GameWon("Sorry you lost, the word was " + word);
+                    keepPlaying = GameWon("Sorry you lost, the word was " + word);
+
             }
             else {
-                int mistakes = 0; //Initialized # of mistakes
-                do {
                     //Checks the user input:letter only, one letter, and if they have already entered this letter
                     boolean check = true;
                     String guess = JOptionPane.showInputDialog(null, "Enter a letter");
@@ -93,6 +95,7 @@ public class FinalProject18 extends JFrame {
                         g.drawString("Guessed Letters:", 50, 100);
                         g.drawString(guess, x, 100);
                         x = x + 10;
+                        System.out.println(mistakes);
                         shape[mistakes -1].draw(g);
                     } else {
                         int occurenceOfValidLetter = 0;
@@ -109,11 +112,11 @@ public class FinalProject18 extends JFrame {
                         keepPlaying = GameWon("Good Job, you won!");
                     }
                     else if(mistakes == shape.length){
+                        keepGuessing = false;
                         keepPlaying = GameWon("Sorry you lost, the word was " + word);
                     }
-
-                } while (keepGuessing);
-            }
+                }
+            }while (keepGuessing);
         } while (keepPlaying);
     }
     //End of Game Routine
@@ -137,7 +140,7 @@ public class FinalProject18 extends JFrame {
     }
     //Choosing what to guess
     public static boolean guessOption() {
-        Object[] options = {"Letter", "Word"};
+        Object[] options = {"Word", "Letter"};
         int p = JOptionPane.showOptionDialog(null,
                 " What do you want to guess \n" +
                         "Note: If you guess the word you only get one shot.",
@@ -178,13 +181,13 @@ public class FinalProject18 extends JFrame {
                     };
             case 1: pieces = new Figure[]{new Circle(350, 150, Color.BLACK,50),
                     new Line(400, 250, Color.BLACK, 400, 350),
-                    new Line(400, 300, Color.BLACK,350,     350),
+                    new Line(400, 300, Color.BLACK,350, 350),
                     new Line(400, 300, Color.BLACK,450, 350),
                     new Line(400, 350, Color.BLACK, 350, 400),
                     new Line(400, 350, Color.BLACK, 450, 400),
-                    new Circle(375,200,Color.BLACK, 10),
-                    new Circle(425,200,Color.BLACK, 10),
-                    new Line (450,400, Color.BLACK, 525,400),
+                    new Circle(365,175,Color.BLACK, 10),
+                    new Circle(410,175,Color.BLACK, 10),
+                    new Line (450,400, Color.BLACK, 475,400),
                     new Line(350,400,Color.BLACK, 325,400)
             };
         }
